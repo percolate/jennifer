@@ -51,7 +51,8 @@ variable.
         &repo=gh_repo\
         &sha=$GIT_COMMIT\
         &status=$SUCCESS\
-        &job=$BUILD_NUMBER"
+        &job=$JOB_NAME\
+        &build=$BUILD_NUMBER"
     ```
     There might be some spacing issues there, but you get the picture.
  

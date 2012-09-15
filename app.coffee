@@ -26,6 +26,7 @@ JENKINS_REMOTE_BUILD_AUTH_TOKEN = process.env.JENKINS_REMOTE_BUILD_AUTH_TOKEN
 GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER
 GITHUB_REPO = process.env.GITHUB_REPO
 GITHUB_OAUTH_TOKEN = process.env.GITHUB_OAUTH_TOKEN
+#
  
 JENKINS_AUTHED_URL = JENKINS_URL.replace(
   /\/\//, "//#{JENKINS_USERNAME}:#{JENKINS_PASSWORD}@")
@@ -100,7 +101,7 @@ class GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
   BUILDREPORT = "**Build Status**:"
 
-  constructor: (@sha, @job, @user, @repo, @succeeded, @authToken) ->
+  constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, GITHUB_REPO, @authToken
     @job_url = "#{JENKINS_URL}/job/percolate/#{@job}"
 
@@ -322,14 +323,16 @@ app.del '/jenkins/jobs', (req, res) ->
 # Jenkins lets us know when a build has failed or succeeded.
 app.get '/jenkins/post_build', (req, res) ->
   sha = req.param 'sha'
-  job = parseInt req.param 'job'
+  job = req.param 'job'
+  build = parseInt req.param 'build'
+  sha = req.param 'sha'
   user = req.param 'user'
   repo = req.param 'repo'
   succeeded = req.param('status') is 'success'
 
   # Look for an open pull request with this SHA and make comments.
   commenter = new PullRequestCommenter(
-    sha, job, user, repo, succeeded, GITHUB_OAUTH_TOKEN)
+    sha, job, build, user, repo, succeeded, GITHUB_OAUTH_TOKEN)
 
   commenter.updateComments (e, r) -> console.log e if e?
   res.send 'Ok', 200
