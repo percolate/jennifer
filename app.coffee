@@ -14,7 +14,7 @@ log4js.configure
     ]
 
 log = log4js.getLogger 'app'
-log.setLevel 'DEBUG'
+log.setLevel 'INFO'
 
 # All constants in this block must be defined as env variables
 #
@@ -257,6 +257,7 @@ class GithubPrJenkinsIntegrator
   # 
   createJob: (branchName, prNum) =>
     jobName = @makePrJobName(branchName, prNum)
+
     @jenkins.copy_job(
       JENKINS_TEMPLATE_JOB_NAME
       , jobName
@@ -275,7 +276,7 @@ class GithubPrJenkinsIntegrator
               log.warn "Failed to trigger build for #{jobName}."
               log.warn e
 
-        setTimeout trigger_build_cb, 10000
+        setTimeout trigger_build_cb, (30 * 1000)
     )
 
   triggerBuild: (jobName, cb) =>
