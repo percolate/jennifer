@@ -45,6 +45,7 @@ variable.
     your tests, establish an environment variable (maybe called `SUCCESS`?) 
     that is set to `success` if your build succeeded and something else 
     otherwise. Have this run after the build is complete:
+
     ```sh
     curl "http://localhost:3000/jenkins/post_build\
         user=gh_user_who_owns_the_repo\
@@ -54,6 +55,7 @@ variable.
         &job=$JOB_NAME\
         &build=$BUILD_NUMBER"
     ```
+    
     There might be some spacing issues there, but you get the picture.
  
 ## Jennifer setup
