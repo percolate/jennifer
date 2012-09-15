@@ -1,0 +1,18 @@
+{
+    "name": "jennifer"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.7"
+    , "jade": ">= 0.0.1"
+    , "coffee-script": "1.2.x"
+    , "underscore": "*"
+    , "underscore.string": "*"
+    , "request": "*"
+    , "async": "*"
+    , "node-jenkins-api": "git://github.com/jansepar/node-jenkins-api.git#master"
+    , "node-cron": "git://github.com/ncb000gt/node-cron.git"
+    , "log4js": "git://github.com/nomiddlename/log4js-node.git"
+  }
+}
+
