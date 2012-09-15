@@ -103,7 +103,7 @@ class PullRequestCommenter extends GithubCommunicator
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, GITHUB_REPO, @authToken
-    @job_url = "#{JENKINS_URL}/job/percolate/#{@job}"
+    @job_url = "#{JENKINS_URL}/job/#{@job}/#{@build}"
 
   successComment: =>
     "#{BUILDREPORT} `Succeeded` (#{@sha}, [Jenkins job info](#{@job_url}))"
