@@ -200,7 +200,7 @@ class GithubPrJenkinsIntegrator
           log.info "Deleting old PR job #{job.name}."
           @deleteJob job.name
 
-    log.info "Finished pruning jobs."
+    log.debug "Finished pruning jobs."
     cb(null)
          
   # for each PR in the GitHub repo, ensure a Jenkins job exists or create one
@@ -219,7 +219,7 @@ class GithubPrJenkinsIntegrator
           log.debug "Creating branch #{branch}."
           @createJob branch, num
 
-    log.info "Finished job creation."
+    log.debug "Finished job creation."
     cb(null)
 
   # given a Jenkins job name, delete it
@@ -346,7 +346,7 @@ ghComm = new GithubCommunicator(
 ghJenkinsInt = new GithubPrJenkinsIntegrator ghComm
 ghJenkinsInt.sync()
 
-new cronJob('0 */2 * * * *'
+new cronJob('0 * * * * *'
   , () ->
     ghJenkinsInt.sync()
   , null, true)
