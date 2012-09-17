@@ -285,7 +285,9 @@ class GithubPrJenkinsIntegrator
     path ="#{JENKINS_AUTHED_URL}/job/#{jobName}/build"
     path += "?token=#{JENKINS_REMOTE_BUILD_AUTH_TOKEN}"
 
-    request.get { uri: path, json: true }, (e, r, body) ->
+    log.info "Hitting path #{path}."
+
+    request.get { uri: path }, (e, r, body) ->
       cb e, body
 
                 
