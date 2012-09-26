@@ -14,7 +14,7 @@ log4js.configure
     ]
 
 log = log4js.getLogger 'app'
-log.setLevel 'INFO'
+log.setLevel 'DEBUG'
 
 # All constants in this block must be defined as env variables
 #
@@ -99,17 +99,20 @@ class GithubCommunicator
      
 
 class PullRequestCommenter extends GithubCommunicator
-  BUILDREPORT = "**Build Status**:"
+  BUILDREPORT_MARKER = "**Build Status**"
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, GITHUB_REPO, @authToken
     @job_url = "#{JENKINS_URL}/job/#{@job}/#{@build}"
 
   successComment: =>
-    "#{BUILDREPORT} `Succeeded` (#{@sha}, [Jenkins job info](#{@job_url}))"
+    @makeBuildReport "Succeeded"
 
   errorComment: =>
-    "#{BUILDREPORT} `Failed` (#{@sha}, [job info](#{@job_url}))"
+    @makeBuildReport "Failed"
+
+  makeBuildReport: (status) =>
+    "#{BUILDREPORT_MARKER}: `#{status}` (#{@sha}, [build info](#{@job_url}))"
 
   # Find the first open pull with a matching HEAD sha
   findMatchingPull: (pulls, cb) =>
@@ -127,7 +130,7 @@ class PullRequestCommenter extends GithubCommunicator
   removePreviousPullComments: (pull, cb) =>
     @getCommentsForIssue pull.number, (e, comments) =>
       return cb e if e?
-      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT
+      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
       async.forEach old_comments, (comment, done_delete) =>
         @deleteComment comment.id, done_delete
       , () -> cb null, pull
@@ -194,6 +197,10 @@ class GithubPrJenkinsIntegrator
     @withPrsAndJobs (numToBranch, jobData) =>
       jobNames = jobData.map (job) -> job.name
       branches = (branch for num, branch of numToBranch)
+
+      if branches.length == 0
+        log.info "Looks like there was no response from GH. skipping."
+        return
 
       for job in jobData
         if @isPrJob(job.name) and (@makeBranchFromJob(job.name) not in branches)
