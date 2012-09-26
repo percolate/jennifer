@@ -100,6 +100,7 @@ class GithubCommunicator
 
 class PullRequestCommenter extends GithubCommunicator
   BUILDREPORT = "**Build Status**:"
+  IMAGE_PATH = "https://github.com/percolate/jennifer/raw/master/"
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, GITHUB_REPO, @authToken
