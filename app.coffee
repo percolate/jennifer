@@ -200,7 +200,7 @@ class GithubPrJenkinsIntegrator
           log.info "Deleting old PR job #{job.name}."
           @deleteJob job.name
 
-    log.info "Finished pruning jobs."
+    log.debug "Finished pruning jobs."
     cb(null)
          
   # for each PR in the GitHub repo, ensure a Jenkins job exists or create one
@@ -219,7 +219,7 @@ class GithubPrJenkinsIntegrator
           log.debug "Creating branch #{branch}."
           @createJob branch, num
 
-    log.info "Finished job creation."
+    log.debug "Finished job creation."
     cb(null)
 
   # given a Jenkins job name, delete it
@@ -285,7 +285,9 @@ class GithubPrJenkinsIntegrator
     path ="#{JENKINS_AUTHED_URL}/job/#{jobName}/build"
     path += "?token=#{JENKINS_REMOTE_BUILD_AUTH_TOKEN}"
 
-    request.get { uri: path, json: true }, (e, r, body) ->
+    log.info "Hitting path #{path}."
+
+    request.get { uri: path }, (e, r, body) ->
       cb e, body
 
                 
@@ -344,7 +346,7 @@ ghComm = new GithubCommunicator(
 ghJenkinsInt = new GithubPrJenkinsIntegrator ghComm
 ghJenkinsInt.sync()
 
-new cronJob('0 */2 * * * *'
+new cronJob('0 * * * * *'
   , () ->
     ghJenkinsInt.sync()
   , null, true)
