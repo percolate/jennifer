@@ -101,20 +101,26 @@ class GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
 
   BUILDREPORT_MARKER = "**Build Status**"
-  IMAGE_PATH = "https://github.com/percolate/jennifer/raw/master/"
+  IMAGE_PATH = "https://github.com/percolate/jennifer/raw/master"
+  PASSED_PATH = "#{IMAGE_PATH}/passed.png"
+  FAILED_PATH = "#{IMAGE_PATH}/failed.png"
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, GITHUB_REPO, @authToken
     @job_url = "#{JENKINS_URL}/job/#{@job}/#{@build}"
 
   successComment: =>
-    @makeBuildReport "Succeeded"
+    @makeBuildReport "Succeeded", PASSED_PATH
 
   errorComment: =>
-    @makeBuildReport "Failed"
+    @makeBuildReport "Failed", FAILED_PATH
 
-  makeBuildReport: (status) =>
-    "#{BUILDREPORT_MARKER}: `#{status}` (#{@sha}, [build info](#{@job_url}))"
+  makeBuildReport: (status, image_path) =>
+    report = "#{BUILDREPORT_MARKER}: `#{status}` "
+    report += "(#{@sha}, [build info](#{@job_url}))   "
+    report += "![stoplight](#{image_path} #{status})"
+
+    report
 
   # Find the first open pull with a matching HEAD sha
   findMatchingPull: (pulls, cb) =>
