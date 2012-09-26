@@ -118,7 +118,7 @@ class PullRequestCommenter extends GithubCommunicator
   makeBuildReport: (status, image_path) =>
     report = "#{BUILDREPORT_MARKER}: `#{status}` "
     report += "(#{@sha}, [build info](#{@job_url}))   "
-    report += "![stoplight](#{image_path} #{status})"
+    report += "![stoplight](#{image_path} \"#{status}\")"
 
     report
 
