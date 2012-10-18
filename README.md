@@ -1,13 +1,13 @@
 # jennifer
 
-A node.js bridge between Github pull requests and Jenkins. Began as a fork of
-[this](https://gist.github.com/1911084).
+A node.js bridge between Github pull requests and Jenkins by @jamesob. Began as
+a fork of [this](https://gist.github.com/1911084).
 
 For each current pull request in Github, a Jenkins job is created and builds
 whenever the associated branch is pushed to. Upon each build, success or
 failure is posted back to the PR's comment thread.
 
-![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/scshot.jpeg "Oooh. PR stoplights.")
+![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/scshot.jpeg "Oooh. PR stoplights.")
 
 ## Github setup
 
@@ -61,7 +61,7 @@ variable.
 ## Jennifer setup
 
 0. Clone this and install dependencies with `npm install`.
-1. Establish all environment variables as dictated by the top of `app.coffee`.
+1. Establish all environment variables as dictated by `env.coffee`.
   These should be similar to the some of the values used above; hopefully after
   faring the above instructions, you will have an intuition for the naming.
 2. Run it with `node server.js`. It will log out to `jennifer.log`.
@@ -72,6 +72,6 @@ rerun as pushes happen. Comments will be made to the PR discussion. Hooray.
  
 ## Images
 
-Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/passed.png "Oooh. PR stoplights.") 
+Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/passed.png "Oooh. PR stoplights.") 
 
 Icons used from [here](http://deleket.deviantart.com/art/Sleek-XP-Basic-Icons-97279032).
