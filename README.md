@@ -1,7 +1,7 @@
 # jennifer
 
-A node.js bridge between Github pull requests and Jenkins by @jamesob. Began as
-a fork of [this](https://gist.github.com/1911084).
+A node.js daemon that syncs Github pull requests with Jenkins jobs, by @jamesob at Percolate. 
+Began as a fork of [this](https://gist.github.com/1911084).
 
 For each current pull request in Github, a Jenkins job is created and builds
 whenever the associated branch is pushed to. Upon each build, success or
@@ -14,7 +14,7 @@ failure is posted back to the PR's comment thread.
 Configure Github's post-receive hooks to fire to URL 
 `http://some-login:some-password@your-jenkins-url/github-webhook/`.
 
-You haven't dont anything with that login combination yet, so don't worry.
+You haven't done anything with that login combination yet, so don't worry.
 Ultimately, you will use that information to register a Jenkins user that 
 Github can use.
 
