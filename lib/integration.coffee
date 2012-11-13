@@ -33,8 +33,12 @@ class GithubPrJenkinsIntegrator
         log.warn "Got an error getting Jenkins job data."
         log.warn err
 
-      log.debug "Got #{data.length} jobs from Jenkins."
-      cb(data)
+      if data?
+        log.debug "Got #{data.length} jobs from Jenkins."
+        cb(data)
+      else
+        log.warn "Got no data from Jenkins!"
+        log.warn data
   
   # run a callback, being passed `numToBranch` for PRs and `jobData` for 
   # Jenkins jobs
