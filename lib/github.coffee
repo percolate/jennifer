@@ -59,9 +59,10 @@ class GithubCommunicator
                              
   getOpenPullNumbersToBranches: (cb) =>
     @getOpenPulls (e, body) ->
-      if e
+      if e or (not body?)
         log.warn "Encountered error getting open PRs."
         log.warn e
+        log.warn body
         return
 
       numToBranch = {}
@@ -106,9 +107,20 @@ class PullRequestCommenter extends GithubCommunicator
 
   # Find the first open pull with a matching HEAD sha
   findMatchingPull: (pulls, cb) =>
+    if !pulls?
+      log.warn "Couldn't get pull requests."
+      return 
+
     pulls = _.filter pulls, (p) => p.state is 'open'
     async.detect pulls, (pull, detect_if) =>
-      @getPull pull.number, (e, { head }) =>
+      @getPull pull.number, (e, pr_map) =>
+        if 'head' of pr_map
+          head = pr_map.head
+        else
+          log.warning "No head found for PR json!"
+          log.warning pr_map
+          return 
+
         log.debug "Checking PR number #{pull.number}."
         return cb e if e?
         log.debug "  HEAD of PR is #{head.sha}."
