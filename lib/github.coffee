@@ -117,8 +117,8 @@ class PullRequestCommenter extends GithubCommunicator
         if 'head' of pr_map
           head = pr_map.head
         else
-          log.warning "No head found for PR json!"
-          log.warning pr_map
+          log.warn "No head found for PR json!"
+          log.warn pr_map
           return 
 
         log.debug "Checking PR number #{pull.number}."
