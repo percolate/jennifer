@@ -1,7 +1,8 @@
 # jennifer
 
-A node.js daemon that syncs Github pull requests with Jenkins jobs, by @jamesob at Percolate. 
-Began as a fork of [this](https://gist.github.com/1911084).
+A node.js daemon that syncs Github pull requests with Jenkins jobs, by 
+[jamesob](https://github.com/jamesob)
+at Percolate.  Began as a fork of [this](https://gist.github.com/1911084).
 
 For each current pull request in Github, a Jenkins job is created and builds
 whenever the associated branch is pushed to. Upon each build, success or
