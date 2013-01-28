@@ -74,4 +74,5 @@ rerun as pushes happen. Comments will be made to the PR discussion. Hooray.
 
 Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/passed.png "Oooh. PR stoplights.") 
 
-Icons used from [here](http://deleket.deviantart.com/art/Sleek-XP-Basic-Icons-97279032).
+Icons used from [here](http://openiconlibrary.sourceforge.net/), licensed under 
+LGPL-2.1. 
