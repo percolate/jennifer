@@ -4,7 +4,7 @@ A node.js daemon that syncs Github pull requests with Jenkins jobs, by
 [jamesob](https://github.com/jamesob)
 at Percolate.  Began as a fork of [this](https://gist.github.com/1911084).
 
-For each current pull request in Github, a Jenkins job is created and builds
+For each open pull request in Github, a Jenkins job is created and builds
 whenever the associated branch is pushed to. Upon each build, success or
 failure is posted back to the PR's comment thread.
 
@@ -19,7 +19,7 @@ You haven't done anything with that login combination yet, so don't worry.
 Ultimately, you will use that information to register a Jenkins user that 
 Github can use.
 
-Create an OAuth autherization with a user who has access to the repo being
+Create an OAuth authorization with a user who has access to the repo being
 PR'd to and remember it for later. It will be used in a Jennifer environment
 variable.
 
