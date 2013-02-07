@@ -48,7 +48,7 @@ variable.
     otherwise. Have this run after the build is complete:
 
     ```sh
-    curl "http://your-jennifer-url:3000/jenkins/post_build\
+    curl "http://your-jennifer-url:3000/jenkins/post_build?\
         user=gh_user_who_owns_the_repo\
         &repo=gh_repo\
         &sha=$GIT_COMMIT\
