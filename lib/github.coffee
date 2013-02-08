@@ -77,6 +77,11 @@ class GithubCommunicator
       log.info "Posting comment '#{comment}'."
       log.warn e if e?
 
+  setCommitStatus: (sha, state, target, description) =>
+    @post "/statuses/#{sha}", ({state: state, target_url: target, description: description}), (e, body) ->
+      log.info "Updating commit status to #{state}"
+      log.warn e if e?
+
 
 exports.GithubCommunicator = GithubCommunicator
      
@@ -142,12 +147,19 @@ class PullRequestCommenter extends GithubCommunicator
     @commentOnIssue pull.number, comment
     cb()
 
+  updateCommitStatus: (pull, cb) =>
+    state = if @succeeded then 'success' else 'failure'
+    comment = if @succeeded then @successComment() else @errorComment()
+    @setCommitStatus @sha, state, @job_url, comment
+    cb()
+
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
       @removePreviousPullComments
       @makePullComment
+      @updateCommitStatus
     ], cb
 
    
