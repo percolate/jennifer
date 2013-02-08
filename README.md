@@ -10,6 +10,12 @@ failure is posted back to the PR's comment thread.
 
 ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/scshot.jpeg "Oooh. PR stoplights.")
 
+## Features
+
+- Jenkins job per PR, sync'd on the minute
+- Build status reported to pull request comment threads
+- Github commit status API integration (thanks [@mattheath](https://github.com/mattheath)!)
+
 ## Github setup
 
 Configure Github's post-receive hooks to fire to URL 
