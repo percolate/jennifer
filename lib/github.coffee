@@ -77,6 +77,11 @@ class GithubCommunicator
       log.info "Posting comment '#{comment}'."
       log.warn e if e?
 
+  setCommitStatus: (sha, state, target, description) =>
+    @post "/statuses/#{sha}", ({state: state, target_url: target, description: description}), (e, body) ->
+      log.info "Updating commit status to '#{state}' for #{target}"
+      log.warn e if e?
+
 
 exports.GithubCommunicator = GithubCommunicator
      
@@ -140,16 +145,24 @@ class PullRequestCommenter extends GithubCommunicator
   makePullComment: (pull, cb) =>
     comment = if @succeeded then @successComment() else @errorComment()
     @commentOnIssue pull.number, comment
-    cb()
+    cb null, pull
+
+  updateCommitStatus: (pull, cb) =>
+    state = if @succeeded then 'success' else 'failure'
+    comment = if @succeeded then 'passed' else 'failed'
+    comment = 'The Jenkins build ' + comment
+    @setCommitStatus @sha, state, @job_url, comment
+    cb null, pull
 
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
       @removePreviousPullComments
+      @updateCommitStatus
       @makePullComment
     ], cb
 
-   
+
 exports.PullRequestCommenter = PullRequestCommenter
 

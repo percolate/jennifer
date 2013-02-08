@@ -59,7 +59,6 @@ app.get '/jenkins/post_build', (req, res) ->
   sha = req.param 'sha'
   job = req.param 'job'
   build = parseInt req.param 'build'
-  sha = req.param 'sha'
   user = req.param 'user'
   repo = req.param 'repo'
   succeeded = req.param('status') is 'success'
