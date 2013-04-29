@@ -14,6 +14,7 @@ log     = require('./logging').log
 class GithubCommunicator
   constructor: (@user, @repo, @authToken) ->
     @api = "https://api.github.com/repos/#{@user}/#{@repo}"
+    @headers = {'User-Agent': 'Node.js/0.8.9 (Jennifer, by Percolate)'}
   
   buildApiUri: (path) =>
     access_param = "?access_token=#{@authToken}"
@@ -27,19 +28,19 @@ class GithubCommunicator
 
   post: (path, obj, cb) =>
     log.debug "Calling POST on #{@buildApiUri(path)}."
-    request.post { uri: @buildApiUri(path), json: obj }, (e, r, body) ->
+    request.post { uri: @buildApiUri(path), json: obj, headers: @headers }, (e, r, body) ->
       log.debug body
       cb e, body
 
   get: (path, cb) =>
     log.debug "Calling GET on #{@buildApiUri(path)}."
-    request.get { uri: @buildApiUri(path), json: true }, (e, r, body) ->
+    request.get { uri: @buildApiUri(path), json: true, headers: @headers }, (e, r, body) ->
       log.debug body
       cb e, body
             
   del: (path, cb) =>
     log.debug "Calling DEL on #{@buildApiUri(path)}."
-    request.del { uri: @buildApiUri(path) }, (e, r, body) ->
+    request.del { uri: @buildApiUri(path), headers: @headers }, (e, r, body) ->
       cb e, body
 
   getCommentsForIssue: (issue, cb) =>
