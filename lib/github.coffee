@@ -49,14 +49,18 @@ class GithubCommunicator
   deleteComment: (id, cb) =>
     @del "/issues/comments/#{id}", cb
 
+  # XXX this will only return the first 100 pull requests. There's no quick
+  # way to handle pagination beyond that.
   getPulls: (cb) =>
-    @get "/pulls", cb
+    @get "/pulls?per_page=100", cb
             
   getPull: (id, cb) =>
     @get "/pulls/#{id}", cb
        
+  # XXX this will only return the first 100 pull requests. There's no quick
+  # way to handle pagination beyond that.
   getOpenPulls: (cb) =>
-    @get "/pulls?state=open", cb
+    @get "/pulls?state=open&per_page=100", cb
                              
   getOpenPullNumbersToBranches: (cb) =>
     @getOpenPulls (e, body) ->
