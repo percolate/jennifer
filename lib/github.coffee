@@ -94,23 +94,21 @@ exports.GithubCommunicator = GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
 
   BUILDREPORT_MARKER = "**Build Status**"
-  IMAGE_PATH = "https://github.com/percolate/jennifer/raw/master/public/assets/images"
-  PASSED_PATH = "#{IMAGE_PATH}/passed.png"
-  FAILED_PATH = "#{IMAGE_PATH}/failed.png"
+  EMOJI = {"Failed":":no_entry:","Succeeded":":white_check_mark:"}
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
 
   successComment: =>
-    @makeBuildReport "Succeeded", PASSED_PATH
+    @makeBuildReport "Succeeded"
 
   errorComment: =>
-    @makeBuildReport "Failed", FAILED_PATH
+    @makeBuildReport "Failed"
 
-  makeBuildReport: (status, image_path) =>
+  makeBuildReport: (status) =>
     report = "#{BUILDREPORT_MARKER}: `#{status}` "
-    report += "![stoplight](#{image_path} \"#{status}\") "
+    report += "#{EMOJI[status]}"
     report += " (#{@sha}, [build info](#{@job_url}))"
 
     report
