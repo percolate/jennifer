@@ -1,6 +1,8 @@
 
 # All constants in this block must be defined as env variables
 #
+exports.LOG_FILE = process.env.LOG_FILE || 'jennifer.log'
+exports.LOG_LEVEL = process.env.LOG_LEVEL || 'INFO'
 exports.JENKINS_URL = process.env.JENKINS_URL
 exports.JENKINS_USERNAME = process.env.JENKINS_USERNAME
 exports.JENKINS_PASSWORD = process.env.JENKINS_PASSWORD
