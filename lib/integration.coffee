@@ -121,10 +121,10 @@ class GithubPrJenkinsIntegrator
   # create a Job name based on a branch name
   #
   makePrJobName: (branchName, prNum) =>
-      return "pr_#{prNum}_#{branchName}"
+      return "pr_#{prNum}_#{ encodeURIComponent branchName }"
 
   makeBranchFromJob: (jobName) =>
-      return jobName.replace /pr_\d+_/, ''
+      return decodeURIComponent jobName.replace /pr_\d+_/, ''
 
   # create a Jenkins job based on a PR
   # 
