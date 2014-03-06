@@ -80,7 +80,7 @@ start_polling = ->
   ghJenkinsInt = new integration.GithubPrJenkinsIntegrator ghComm
   ghJenkinsInt.sync()
 
-  new cronJob('*/2 * * * * *'
+  new cronJob('0 */2 * * * *'
     , () ->
       ghJenkinsInt.sync()
     , null, true)
