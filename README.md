@@ -74,8 +74,8 @@ variable.
 2. Run it with `node server.js`. It will log out to `jennifer.log`.
 
 After that, you should have a few new jobs in Jenkins. They should (not by
-coincidence) match the pull requests you currently have open. Tests will be
-rerun as pushes happen. Comments will be made to the PR discussion. Hooray.
+coincidence) match the pull requests you currently have open. Status will be
+updated as pushes happen. Comments will be made to the PR discussion. Hooray.
 
 ## Images
 
