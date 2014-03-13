@@ -6,7 +6,7 @@ at Percolate.  Began as a fork of [this](https://gist.github.com/1911084).
 
 For each open pull request in Github, a Jenkins job is created and builds
 whenever the associated branch is pushed to. Upon each build, success or
-failure is posted back to the PR's comment thread.
+failure is posted back to the PR's status.
 
 ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/scshot.jpeg "Oooh. PR stoplights.")
 
