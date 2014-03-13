@@ -137,19 +137,6 @@ class PullRequestCommenter extends GithubCommunicator
       return cb "No pull request for #{@sha} found" unless match?
       cb null, match
 
-  removePreviousPullComments: (pull, cb) =>
-    @getCommentsForIssue pull.number, (e, comments) =>
-      return cb e if e?
-      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
-      async.forEach old_comments, (comment, done_delete) =>
-        @deleteComment comment.id, done_delete
-      , () -> cb null, pull
-
-  makePullComment: (pull, cb) =>
-    comment = if @succeeded then @successComment() else @errorComment()
-    @commentOnIssue pull.number, comment
-    cb null, pull
-
   updateCommitStatus: (pull, cb) =>
     state = if @succeeded then 'success' else 'failure'
     comment = if @succeeded then 'passed' else 'failed'
@@ -161,9 +148,7 @@ class PullRequestCommenter extends GithubCommunicator
     async.waterfall [
       @getPulls
       @findMatchingPull
-      @removePreviousPullComments
       @updateCommitStatus
-      @makePullComment
     ], cb
 
 
