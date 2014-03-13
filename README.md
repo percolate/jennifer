@@ -13,7 +13,6 @@ failure is posted back to the PR's comment thread.
 ## Features
 
 - Jenkins job per PR, sync'd on the minute
-- Build status reported to pull request comment threads
 - Github commit status API integration (thanks [@mattheath](https://github.com/mattheath)!)
 
 ## Github setup
@@ -76,10 +75,3 @@ variable.
 After that, you should have a few new jobs in Jenkins. They should (not by
 coincidence) match the pull requests you currently have open. Status will be
 updated as pushes happen. Comments will be made to the PR discussion. Hooray.
-
-## Images
-
-Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/passed.png "Oooh. PR stoplights.")
-
-Icons used from [here](http://openiconlibrary.sourceforge.net/), licensed under
-LGPL-2.1.
