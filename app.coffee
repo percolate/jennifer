@@ -12,7 +12,7 @@ github       = require './lib/github'
 integration  = require './lib/integration'
 log          = require('./lib/logging').log
 
-                
+
 app = module.exports = express.createServer()
 
 
@@ -28,7 +28,7 @@ app.configure 'production', ->
 
 
 # GET a list of jenkins jobs
-# 
+#
 app.get '/jenkins/jobs', (req, res) ->
   jenkins = jenkinsapi.init(env.JENKINS_AUTHED_URL)
 
@@ -70,7 +70,7 @@ app.get '/jenkins/post_build', (req, res) ->
   commenter.updateComments (e, r) -> console.log e if e?
   res.send 'Ok', 200
 
-  
+
 # Poll periodicially for new PRs, respond accordingly
 #
 start_polling = ->
@@ -84,8 +84,7 @@ start_polling = ->
     , () ->
       ghJenkinsInt.sync()
     , null, true)
-                                  
+
 
 app.listen app.settings.port
 start_polling()
- 

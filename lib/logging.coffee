@@ -15,4 +15,3 @@ log = log4js.getLogger 'app'
 log.setLevel env.LOG_LEVEL
 
 exports.log = log
-         

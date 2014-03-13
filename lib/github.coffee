@@ -15,10 +15,10 @@ class GithubCommunicator
   constructor: (@user, @repo, @authToken) ->
     @api = "https://api.github.com/repos/#{@user}/#{@repo}"
     @headers = {'User-Agent': 'Node.js/0.8.9 (Jennifer, by Percolate)'}
-  
+
   buildApiUri: (path) =>
     access_param = "?access_token=#{@authToken}"
-    
+
     if (path.indexOf '?') != -1
       path = path.replace '?', "#{access_param}&"
     else
@@ -37,7 +37,7 @@ class GithubCommunicator
     request.get { uri: @buildApiUri(path), json: true, headers: @headers }, (e, r, body) ->
       log.debug body
       cb e, body
-            
+
   del: (path, cb) =>
     log.debug "Calling DEL on #{@buildApiUri(path)}."
     request.del { uri: @buildApiUri(path), headers: @headers }, (e, r, body) ->
@@ -53,15 +53,15 @@ class GithubCommunicator
   # way to handle pagination beyond that.
   getPulls: (cb) =>
     @get "/pulls?per_page=100", cb
-            
+
   getPull: (id, cb) =>
     @get "/pulls/#{id}", cb
-       
+
   # XXX this will only return the first 100 pull requests. There's no quick
   # way to handle pagination beyond that.
   getOpenPulls: (cb) =>
     @get "/pulls?state=open&per_page=100", cb
-                             
+
   getOpenPullNumbersToBranches: (cb) =>
     @getOpenPulls (e, body) ->
       if e or (not body?)
@@ -89,7 +89,7 @@ class GithubCommunicator
 
 
 exports.GithubCommunicator = GithubCommunicator
-     
+
 
 class PullRequestCommenter extends GithubCommunicator
 
@@ -117,7 +117,7 @@ class PullRequestCommenter extends GithubCommunicator
   findMatchingPull: (pulls, cb) =>
     if !pulls?
       log.warn "Couldn't get pull requests."
-      return 
+      return
 
     pulls = _.filter pulls, (p) => p.state is 'open'
     async.detect pulls, (pull, detect_if) =>
@@ -127,7 +127,7 @@ class PullRequestCommenter extends GithubCommunicator
         else
           log.warn "No head found for PR json!"
           log.warn pr_map
-          return 
+          return
 
         log.debug "Checking PR number #{pull.number}."
         return cb e if e?
@@ -136,19 +136,6 @@ class PullRequestCommenter extends GithubCommunicator
     , (match) =>
       return cb "No pull request for #{@sha} found" unless match?
       cb null, match
-
-  removePreviousPullComments: (pull, cb) =>
-    @getCommentsForIssue pull.number, (e, comments) =>
-      return cb e if e?
-      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
-      async.forEach old_comments, (comment, done_delete) =>
-        @deleteComment comment.id, done_delete
-      , () -> cb null, pull
-
-  makePullComment: (pull, cb) =>
-    comment = if @succeeded then @successComment() else @errorComment()
-    @commentOnIssue pull.number, comment
-    cb null, pull
 
   updateCommitStatus: (pull, cb) =>
     state = if @succeeded then 'success' else 'failure'
@@ -161,11 +148,8 @@ class PullRequestCommenter extends GithubCommunicator
     async.waterfall [
       @getPulls
       @findMatchingPull
-      @removePreviousPullComments
       @updateCommitStatus
-      @makePullComment
     ], cb
 
 
 exports.PullRequestCommenter = PullRequestCommenter
-
