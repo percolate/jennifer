@@ -12,7 +12,6 @@ exports.GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER
 exports.GITHUB_REPO = process.env.GITHUB_REPO
 exports.GITHUB_OAUTH_TOKEN = process.env.GITHUB_OAUTH_TOKEN
 #
- 
+
 exports.JENKINS_AUTHED_URL = exports.JENKINS_URL.replace(
   /\/\//, "//#{exports.JENKINS_USERNAME}:#{exports.JENKINS_PASSWORD}@")
-                                                      

@@ -1,7 +1,7 @@
-# 
+#
 # Classes that handle Jenkins/GitHub integration
 #
- 
+
 async      = require 'async'
 request    = require 'request'
 _          = require 'underscore'
@@ -10,7 +10,7 @@ jenkinsapi = require 'jenkins-api'
 
 env     = require '../env'
 log     = require('./logging').log
- 
+
 class GithubPrJenkinsIntegrator
 
   constructor: (@ghCommunicator) ->
@@ -39,8 +39,8 @@ class GithubPrJenkinsIntegrator
       else
         log.warn "Got no data from Jenkins!"
         log.warn data
-  
-  # run a callback, being passed `numToBranch` for PRs and `jobData` for 
+
+  # run a callback, being passed `numToBranch` for PRs and `jobData` for
   # Jenkins jobs
   #
   withPrsAndJobs: (cb) =>
@@ -54,7 +54,7 @@ class GithubPrJenkinsIntegrator
 
       @withJobData (jobData) ->
         cb(numToBranch, jobData)
-        
+
   # delete any jenkins job without a corresponding PR
   #
   pruneJobs: (cb) =>
@@ -75,7 +75,7 @@ class GithubPrJenkinsIntegrator
 
     log.debug "Finished pruning jobs."
     cb(null)
-         
+
   # for each PR in the GitHub repo, ensure a Jenkins job exists or create one
   #
   syncJobs: (cb) =>
@@ -127,7 +127,7 @@ class GithubPrJenkinsIntegrator
       return decodeURIComponent jobName.replace /pr_\d+_/, ''
 
   # create a Jenkins job based on a PR
-  # 
+  #
   createJob: (branchName, prNum) =>
     jobName = @makePrJobName(branchName, prNum)
 
@@ -162,7 +162,6 @@ class GithubPrJenkinsIntegrator
 
     request.get { uri: path }, (e, r, body) ->
       cb e, body
-   
+
 
 exports.GithubPrJenkinsIntegrator = GithubPrJenkinsIntegrator
-

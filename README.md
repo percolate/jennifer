@@ -1,6 +1,6 @@
 # jennifer
 
-A node.js daemon that syncs Github pull requests with Jenkins jobs, by 
+A node.js daemon that syncs Github pull requests with Jenkins jobs, by
 [jamesob](https://github.com/jamesob)
 at Percolate.  Began as a fork of [this](https://gist.github.com/1911084).
 
@@ -18,11 +18,11 @@ failure is posted back to the PR's comment thread.
 
 ## Github setup
 
-Configure Github's post-receive hooks to fire to URL 
+Configure Github's post-receive hooks to fire to URL
 `http://some-login:some-password@your-jenkins-url/github-webhook/`.
 
 You haven't done anything with that login combination yet, so don't worry.
-Ultimately, you will use that information to register a Jenkins user that 
+Ultimately, you will use that information to register a Jenkins user that
 Github can use.
 
 Create an OAuth authorization with a user who has access to the repo being
@@ -32,7 +32,7 @@ variable.
 ## Jenkins setup
 
 2. Enable the `git` and `github` plugins.
-1. For authentication, use *Jenkins' own user database*. Create a user with 
+1. For authentication, use *Jenkins' own user database*. Create a user with
   the credentials you used in the Github post-receive hook above.
 3. Create yet another user to be used by Jennifer with full privileges.
 3. Create a Job which will serve as a template for each PR-specific job. Name
@@ -42,15 +42,15 @@ variable.
   * Configure it with the right Github project, etc.
   * For *Source Code Management*, select *Git* and specify the repo URL, etc.,
     but for *Branch specifier*, put `${pr_branch}`. This is a sort-of-horrible
-    hack wherein that special identifier is substituted out for the actual 
+    hack wherein that special identifier is substituted out for the actual
     branch associated with a given PR.
   * Under *Build Triggers*, select *Trigger builds remotely...*. Pick an
     authentication token and remember it for later.
   * Again under `Build Triggers`, select *Build when a change is pushed to
     GitHub*.
   * Under *Build*, run your tests, etc., but within the same script as running
-    your tests, establish an environment variable (maybe called `SUCCESS`?) 
-    that is set to `success` if your build succeeded and something else 
+    your tests, establish an environment variable (maybe called `SUCCESS`?)
+    that is set to `success` if your build succeeded and something else
     otherwise. Have this run after the build is complete:
 
     ```sh
@@ -62,9 +62,9 @@ variable.
         &job=$JOB_NAME\
         &build=$BUILD_NUMBER"
     ```
-    
+
     There might be some spacing issues there, but you get the picture.
- 
+
 ## Jennifer setup
 
 0. Clone this and install dependencies with `npm install`.
@@ -76,10 +76,10 @@ variable.
 After that, you should have a few new jobs in Jenkins. They should (not by
 coincidence) match the pull requests you currently have open. Tests will be
 rerun as pushes happen. Comments will be made to the PR discussion. Hooray.
- 
+
 ## Images
 
-Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/passed.png "Oooh. PR stoplights.") 
+Inline image test: ![ooooh. stoplights.](https://github.com/percolate/jennifer/raw/master/public/assets/images/passed.png "Oooh. PR stoplights.")
 
-Icons used from [here](http://openiconlibrary.sourceforge.net/), licensed under 
-LGPL-2.1. 
+Icons used from [here](http://openiconlibrary.sourceforge.net/), licensed under
+LGPL-2.1.
