@@ -100,9 +100,6 @@ class PullRequestCommenter extends GithubCommunicator
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
 
-  successComment: =>
-    @makeBuildReport "Succeeded"
-
   errorComment: =>
     @makeBuildReport "Failed"
 
@@ -144,11 +141,26 @@ class PullRequestCommenter extends GithubCommunicator
     @setCommitStatus @sha, state, @job_url, comment
     cb null, pull
 
+  removePreviousPullComments: (pull, cb) =>
+    @getCommentsForIssue pull.number, (e, comments) =>
+      return cb e if e?
+      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
+      async.forEach old_comments, (comment, done_delete) =>
+        @deleteComment comment.id, done_delete
+      , () -> cb null, pull
+
+  makePullComment: (pull, cb) =>
+    if !@succeeded
+      @commentOnIssue pull.number, @errorComment()
+      cb null, pull
+
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
+      @removePreviousPullComments
       @updateCommitStatus
+      @makePullComment
     ], cb
 
 

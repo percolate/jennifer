@@ -13,6 +13,8 @@ failure is posted back to the PR's status.
 ## Features
 
 - Jenkins job per PR, sync'd on the minute
+- Build failure causes a comment in the PR thread (to notify author of failure
+  via Github's email services)
 - Github commit status API integration (thanks [@mattheath](https://github.com/mattheath)!)
 
 ## Github setup
