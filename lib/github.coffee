@@ -141,6 +141,14 @@ class PullRequestCommenter extends GithubCommunicator
     @setCommitStatus @sha, state, @job_url, comment
     cb null, pull
 
+  removePreviousPullComments: (pull, cb) =>
+    @getCommentsForIssue pull.number, (e, comments) =>
+      return cb e if e?
+      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
+      async.forEach old_comments, (comment, done_delete) =>
+        @deleteComment comment.id, done_delete
+      , () -> cb null, pull
+
   makePullComment: (pull, cb) =>
     if !@succeeded
       @commentOnIssue pull.number, @errorComment()
@@ -150,6 +158,7 @@ class PullRequestCommenter extends GithubCommunicator
     async.waterfall [
       @getPulls
       @findMatchingPull
+      @removePreviousPullComments
       @updateCommitStatus
       @makePullComment
     ], cb
