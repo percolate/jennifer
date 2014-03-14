@@ -100,9 +100,6 @@ class PullRequestCommenter extends GithubCommunicator
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
 
-  successComment: =>
-    @makeBuildReport "Succeeded"
-
   errorComment: =>
     @makeBuildReport "Failed"
 
@@ -144,11 +141,17 @@ class PullRequestCommenter extends GithubCommunicator
     @setCommitStatus @sha, state, @job_url, comment
     cb null, pull
 
+  makePullComment: (pull, cb) =>
+    if !@succeeded
+      @commentOnIssue pull.number, @errorComment()
+      cb null, pull
+
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
       @updateCommitStatus
+      @makePullComment
     ], cb
 
 
