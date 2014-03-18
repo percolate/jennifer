@@ -137,7 +137,8 @@ class PullRequestCommenter extends GithubCommunicator
   updateCommitStatus: (pull, cb) =>
     state = if @succeeded then 'success' else 'failure'
     comment = if @succeeded then 'passed' else 'failed'
-    comment = 'The Jenkins build ' + comment
+    now = new Date()
+    comment = "The Jenkins build " + comment + " on #{now.toString()}"
     @setCommitStatus @sha, state, @job_url, comment
     cb null, pull
 
