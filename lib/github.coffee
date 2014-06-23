@@ -94,7 +94,7 @@ exports.GithubCommunicator = GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
 
   BUILDREPORT_MARKER = "**Build Status**"
-  EMOJI = {"Failed":":no_entry:","Succeeded":":white_check_mark:"}
+  EMOJI = {"Failed":":thumbsdown:","Succeeded":":thumbsup:","Pending":":hand:"}
 
   constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
@@ -135,7 +135,7 @@ class PullRequestCommenter extends GithubCommunicator
       cb null, match
 
   updateCommitStatus: (pull, cb) =>
-    state = if @succeeded then 'success' else 'failure'
+    state = if @pending then 'pending' else if @succeeded then 'success' else 'failure'
     comment = if @succeeded then 'passed' else 'failed'
     now = new Date()
     comment = "The Jenkins build " + comment + " on #{now.toString()}"
