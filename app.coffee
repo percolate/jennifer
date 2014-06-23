@@ -53,7 +53,7 @@ app.del '/jenkins/jobs', (req, res) ->
 
   res.send 'Ok', 200
 
-# Jenkins lets us know when it he starts a build
+# Jenkins lets us know when a build starts
 #
 app.get '/jenkins/build_pending', (req, res) ->
   sha = req.param 'sha'
