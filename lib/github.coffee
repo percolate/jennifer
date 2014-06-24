@@ -135,7 +135,7 @@ class PullRequestCommenter extends GithubCommunicator
       cb null, match
 
   updateCommitStatus: (pull, cb) =>
-        if @pending then
+        if @pending
                 log.info "the build is pending"
         else if @succeeded
                 log.info "the build is succeeded"
