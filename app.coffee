@@ -53,19 +53,19 @@ app.del '/jenkins/jobs', (req, res) ->
 
   res.send 'Ok', 200
 
-# Jenkins lets us know when a build starts
+# Jenkins lets us know when a build is happening
 #
-app.get '/jenkins/build_pending', (req, res) ->
+app.get '/jenkins/pre_build', (req, res) ->
   sha = req.param 'sha'
   job = req.param 'job'
   build = parseInt req.param 'build'
   user = req.param 'user'
   repo = req.param 'repo'
-  pending = req.param('status') is 'pending'
+  state = req.param 'status'
 
   # Look for an open pull request with this SHA and make comments.
   commenter = new github.PullRequestCommenter(
-    sha, job, build, user, repo, pending, env.GITHUB_OAUTH_TOKEN)
+    sha, job, build, user, repo, state, env.GITHUB_OAUTH_TOKEN)
 
   commenter.updateComments (e, r) -> console.log e if e?
   res.send 'Ok', 200
@@ -78,11 +78,11 @@ app.get '/jenkins/post_build', (req, res) ->
   build = parseInt req.param 'build'
   user = req.param 'user'
   repo = req.param 'repo'
-  succeeded = req.param('status') is 'success'
+  state = req.param 'status'
 
   # Look for an open pull request with this SHA and make comments.
   commenter = new github.PullRequestCommenter(
-    sha, job, build, user, repo, succeeded, env.GITHUB_OAUTH_TOKEN)
+    sha, job, build, user, repo, state, env.GITHUB_OAUTH_TOKEN)
 
   commenter.updateComments (e, r) -> console.log e if e?
   res.send 'Ok', 200
