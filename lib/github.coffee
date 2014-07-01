@@ -135,17 +135,17 @@ class PullRequestCommenter extends GithubCommunicator
       cb null, match
 
   updateCommitStatus: (pull, cb) =>
-        if @pending
-                log.info "the build is pending"
-        else if @succeeded
-                log.info "the build is succeeded"
-        else
-                log.info "it has failed"
-    state = if @pending then 'pending' else if @succeeded then 'success' else 'failure'
-    comment = if @succeeded then 'passed' else 'failed'
+    status = switch @state
+      when 'success' then 'success'
+      when 'pending' then 'pending'
+      else 'failure'
+    comment = switch @state
+      when 'success' then 'passed'
+      when 'pending' then 'in progress'
+      else 'failed'
     now = new Date()
     comment = "The Jenkins build " + comment + " on #{now.toString()}"
-    @setCommitStatus @sha, state, @job_url, comment
+    @setCommitStatus @sha, status, @job_url, comment
     cb null, pull
 
   removePreviousPullComments: (pull, cb) =>
@@ -156,18 +156,12 @@ class PullRequestCommenter extends GithubCommunicator
         @deleteComment comment.id, done_delete
       , () -> cb null, pull
 
-  makePullComment: (pull, cb) =>
-    if !@succeeded
-      @commentOnIssue pull.number, @errorComment()
-      cb null, pull
-
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
       @removePreviousPullComments
       @updateCommitStatus
-      @makePullComment
     ], cb
 
 
