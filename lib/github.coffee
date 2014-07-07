@@ -96,12 +96,18 @@ class PullRequestCommenter extends GithubCommunicator
   BUILDREPORT_MARKER = "**Build Status**"
   EMOJI = {"Failed":":thumbsdown:","Succeeded":":thumbsup:","Pending":":hand:"}
 
-  constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
+  constructor: (@sha, @job, @build, @user, @repo, @state, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
 
   errorComment: =>
     @makeBuildReport "Failed"
+
+  pendingComment: =>
+    @makeBuildReport "Pending"
+
+  successComment: =>
+    @makeBuildReport "Succeeded"
 
   makeBuildReport: (status) =>
     report = "#{BUILDREPORT_MARKER}: `#{status}` "
@@ -156,12 +162,25 @@ class PullRequestCommenter extends GithubCommunicator
         @deleteComment comment.id, done_delete
       , () -> cb null, pull
 
+  makePullComment: (pull, cb) =>
+    switch @state
+      when 'success'
+        @commentOnIssue pull.number, @successComment()
+        cb null, pull
+      when 'pending'
+        @commentOnIssue pull.number, @pendingComment()
+        cb null, pull
+      else
+        @commentOnIssue pull.number, @errorComment()
+        cb null, pull
+
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
       @removePreviousPullComments
       @updateCommitStatus
+      @makePullComment
     ], cb
 
 
