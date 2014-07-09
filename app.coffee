@@ -53,6 +53,23 @@ app.del '/jenkins/jobs', (req, res) ->
 
   res.send 'Ok', 200
 
+# Jenkins lets us know when a build is happening
+#
+app.get '/jenkins/pre_build', (req, res) ->
+  sha = req.param 'sha'
+  job = req.param 'job'
+  build = parseInt req.param 'build'
+  user = req.param 'user'
+  repo = req.param 'repo'
+  state = req.param 'status'
+
+  # Look for an open pull request with this SHA and make comments.
+  commenter = new github.PullRequestCommenter(
+    sha, job, build, user, repo, state, env.GITHUB_OAUTH_TOKEN)
+
+  commenter.updateComments (e, r) -> console.log e if e?
+  res.send 'Ok', 200
+
 # Jenkins lets us know when a build has failed or succeeded
 #
 app.get '/jenkins/post_build', (req, res) ->
@@ -61,11 +78,11 @@ app.get '/jenkins/post_build', (req, res) ->
   build = parseInt req.param 'build'
   user = req.param 'user'
   repo = req.param 'repo'
-  succeeded = req.param('status') is 'success'
+  state = req.param 'status'
 
   # Look for an open pull request with this SHA and make comments.
   commenter = new github.PullRequestCommenter(
-    sha, job, build, user, repo, succeeded, env.GITHUB_OAUTH_TOKEN)
+    sha, job, build, user, repo, state, env.GITHUB_OAUTH_TOKEN)
 
   commenter.updateComments (e, r) -> console.log e if e?
   res.send 'Ok', 200

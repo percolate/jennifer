@@ -94,14 +94,20 @@ exports.GithubCommunicator = GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
 
   BUILDREPORT_MARKER = "**Build Status**"
-  EMOJI = {"Failed":":no_entry:","Succeeded":":white_check_mark:"}
+  EMOJI = {"Failed":":thumbsdown:","Succeeded":":thumbsup:","Pending":":hand:"}
 
-  constructor: (@sha, @job, @build, @user, @repo, @succeeded, @authToken) ->
+  constructor: (@sha, @job, @build, @user, @repo, @state, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
 
   errorComment: =>
     @makeBuildReport "Failed"
+
+  pendingComment: =>
+    @makeBuildReport "Pending"
+
+  successComment: =>
+    @makeBuildReport "Succeeded"
 
   makeBuildReport: (status) =>
     report = "#{BUILDREPORT_MARKER}: `#{status}` "
@@ -135,11 +141,17 @@ class PullRequestCommenter extends GithubCommunicator
       cb null, match
 
   updateCommitStatus: (pull, cb) =>
-    state = if @succeeded then 'success' else 'failure'
-    comment = if @succeeded then 'passed' else 'failed'
+    status = switch @state
+      when 'success' then 'success'
+      when 'pending' then 'pending'
+      else 'failure'
+    comment = switch @state
+      when 'success' then 'passed'
+      when 'pending' then 'in progress'
+      else 'failed'
     now = new Date()
     comment = "The Jenkins build " + comment + " on #{now.toString()}"
-    @setCommitStatus @sha, state, @job_url, comment
+    @setCommitStatus @sha, status, @job_url, comment
     cb null, pull
 
   removePreviousPullComments: (pull, cb) =>
@@ -151,9 +163,16 @@ class PullRequestCommenter extends GithubCommunicator
       , () -> cb null, pull
 
   makePullComment: (pull, cb) =>
-    if !@succeeded
-      @commentOnIssue pull.number, @errorComment()
-      cb null, pull
+    switch @state
+      when 'success'
+        @commentOnIssue pull.number, @successComment()
+        cb null, pull
+      when 'pending'
+        @commentOnIssue pull.number, @pendingComment()
+        cb null, pull
+      else
+        @commentOnIssue pull.number, @errorComment()
+        cb null, pull
 
   updateComments: (cb) =>
     async.waterfall [
