@@ -94,7 +94,7 @@ exports.GithubCommunicator = GithubCommunicator
 class PullRequestCommenter extends GithubCommunicator
 
   BUILDREPORT_MARKER = "**Build Status**"
-  EMOJI = {"Failed":":thumbsdown:","Succeeded":":thumbsup:","Pending":":hand:"}
+  EMOJI = {"Failed":":no_entry:","Succeeded":":white_check_mark:","Pending":":warning:"}
 
   constructor: (@sha, @job, @build, @user, @repo, @state, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
