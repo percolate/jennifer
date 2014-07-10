@@ -103,9 +103,6 @@ class PullRequestCommenter extends GithubCommunicator
   errorComment: =>
     @makeBuildReport "Failed"
 
-  pendingComment: =>
-    @makeBuildReport "Pending"
-
   successComment: =>
     @makeBuildReport "Succeeded"
 
@@ -167,12 +164,11 @@ class PullRequestCommenter extends GithubCommunicator
       when 'success'
         @commentOnIssue pull.number, @successComment()
         cb null, pull
-      when 'pending'
-        @commentOnIssue pull.number, @pendingComment()
-        cb null, pull
-      else
+      when 'failed'
         @commentOnIssue pull.number, @errorComment()
         cb null, pull
+      else
+        return
 
   updateComments: (cb) =>
     async.waterfall [
