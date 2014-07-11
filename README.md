@@ -84,6 +84,8 @@ variable.
   faring the above instructions, you will have an intuition for the naming.
 2. Run it with `node server.js`. It will log out to `jennifer.log`.
 
+## Done!
+
 After that, you should have a few new jobs in Jenkins. They should (not by
 coincidence) match the pull requests you currently have open. Status will be
 updated as pushes happen. Commit statuses will be updated in GH according
