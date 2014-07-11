@@ -38,17 +38,6 @@ class GithubCommunicator
       log.debug body
       cb e, body
 
-  del: (path, cb) =>
-    log.debug "Calling DEL on #{@buildApiUri(path)}."
-    request.del { uri: @buildApiUri(path), headers: @headers }, (e, r, body) ->
-      cb e, body
-
-  getCommentsForIssue: (issue, cb) =>
-    @get "/issues/#{issue}/comments", cb
-
-  deleteComment: (id, cb) =>
-    @del "/issues/comments/#{id}", cb
-
   # XXX this will only return the first 100 pull requests. There's no quick
   # way to handle pagination beyond that.
   getPulls: (cb) =>
@@ -77,11 +66,6 @@ class GithubCommunicator
 
       cb(e, numToBranch)
 
-  commentOnIssue: (issue, comment) =>
-    @post "/issues/#{issue}/comments", (body: comment), (e, body) ->
-      log.info "Posting comment '#{comment}'."
-      log.warn e if e?
-
   setCommitStatus: (sha, state, target, description) =>
     @post "/statuses/#{sha}", ({state: state, target_url: target, description: description}), (e, body) ->
       log.info "Updating commit status to '#{state}' for #{target}"
@@ -93,25 +77,9 @@ exports.GithubCommunicator = GithubCommunicator
 
 class PullRequestCommenter extends GithubCommunicator
 
-  BUILDREPORT_MARKER = "**Build Status**"
-  EMOJI = {"Failed":":no_entry:","Succeeded":":white_check_mark:","Pending":":warning:"}
-
   constructor: (@sha, @job, @build, @user, @repo, @state, @authToken) ->
     super @user, env.GITHUB_REPO, @authToken
     @job_url = "#{env.JENKINS_URL}/job/#{@job}/#{@build}"
-
-  errorComment: =>
-    @makeBuildReport "Failed"
-
-  successComment: =>
-    @makeBuildReport "Succeeded"
-
-  makeBuildReport: (status) =>
-    report = "#{BUILDREPORT_MARKER}: `#{status}` "
-    report += "#{EMOJI[status]}"
-    report += " (#{@sha}, [build info](#{@job_url}))"
-
-    report
 
   # Find the first open pull with a matching HEAD sha
   findMatchingPull: (pulls, cb) =>
@@ -144,39 +112,18 @@ class PullRequestCommenter extends GithubCommunicator
       else 'failure'
     comment = switch @state
       when 'success' then 'passed'
-      when 'pending' then 'in progress'
+      when 'pending' then 'is in progress'
       else 'failed'
     now = new Date()
     comment = "The Jenkins build " + comment + " on #{now.toString()}"
     @setCommitStatus @sha, status, @job_url, comment
     cb null, pull
 
-  removePreviousPullComments: (pull, cb) =>
-    @getCommentsForIssue pull.number, (e, comments) =>
-      return cb e if e?
-      old_comments = _.filter comments, ({ body }) -> _s.include body, BUILDREPORT_MARKER
-      async.forEach old_comments, (comment, done_delete) =>
-        @deleteComment comment.id, done_delete
-      , () -> cb null, pull
-
-  makePullComment: (pull, cb) =>
-    switch @state
-      when 'success'
-        @commentOnIssue pull.number, @successComment()
-        cb null, pull
-      when 'failed'
-        @commentOnIssue pull.number, @errorComment()
-        cb null, pull
-      else
-        return
-
   updateComments: (cb) =>
     async.waterfall [
       @getPulls
       @findMatchingPull
-      @removePreviousPullComments
       @updateCommitStatus
-      @makePullComment
     ], cb
 
 
