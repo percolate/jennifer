@@ -13,8 +13,6 @@ failure is posted back to the PR's status.
 ## Features
 
 - Jenkins job per PR, sync'd on the minute
-- Build failure causes a comment in the PR thread (to notify author of failure
-  via Github's email services)
 - Github commit status API integration (thanks [@mattheath](https://github.com/mattheath)!)
 
 ## Github setup
@@ -53,7 +51,6 @@ variable.
     your tests, establish an environment variable (maybe called `SUCCESS`?)
     that is set to `success` if your build succeeded and something else
     otherwise. Have this run after the build is complete:
-
     ```sh
     curl "http://your-jennifer-url:3000/jenkins/post_build?\
         user=gh_user_who_owns_the_repo\
@@ -63,8 +60,18 @@ variable.
         &job=$JOB_NAME\
         &build=$BUILD_NUMBER"
     ```
-
     There might be some spacing issues there, but you get the picture.
+  * Optionally, add a similar curl call to the beginning of the build script
+    to signal to Github that the build is in progress.
+    ```sh
+    curl "http://your-jennifer-url:3000/jenkins/pre_build \
+        user=gh_user_who_owns_the_repo\
+        &repo=gh_repo\
+        &sha=$GIT_COMMIT\
+        &status=pending\
+        &job=$JOB_NAME\
+        &build=$BUILD_NUMBER"
+    ```
 
 ## Jennifer setup
 
@@ -76,4 +83,5 @@ variable.
 
 After that, you should have a few new jobs in Jenkins. They should (not by
 coincidence) match the pull requests you currently have open. Status will be
-updated as pushes happen. Comments will be made to the PR discussion. Hooray.
+updated as pushes happen. Commit statuses will be updated in GH according
+to the result of the Jenkins build. Hooray.
